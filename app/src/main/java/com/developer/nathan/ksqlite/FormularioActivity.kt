@@ -5,8 +5,10 @@ import android.support.v7.app.AppCompatActivity
 import android.view.Menu
 import android.view.MenuItem
 import android.widget.Toast
-import com.developer.nathan.ksqlite.dao.AlunoDAO
-import com.developer.nathan.ksqlite.modelo.Aluno
+import com.developer.nathan.ksqlite.dao.TarefaDAO
+import com.developer.nathan.ksqlite.modelo.Tarefa
+
+import org.jetbrains.anko.setContentView
 
 /**
  * Created by natha on 22/02/2018.
@@ -14,18 +16,21 @@ import com.developer.nathan.ksqlite.modelo.Aluno
 class FormularioActivity : AppCompatActivity() {
 
     private var helper: FormularioHelper? = null
+    lateinit var ui : FormularioActivityUi
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_formulario)
+        ui = FormularioActivityUi()
+        ui.setContentView(this)
+
 
         helper = FormularioHelper(this)
 
         val intent = intent
-        val aluno = intent.getSerializableExtra("aluno") as? Aluno
+        val tarefa = intent.getSerializableExtra("tarefa") as? Tarefa
 
-        if (aluno != null) {
-            helper!!.preencheFormulario(aluno)
+        if (tarefa != null) {
+            helper!!.preencheFormulario(tarefa)
         }
 
 
@@ -40,18 +45,18 @@ class FormularioActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.itemId) {
             R.id.menu_formulario_ok -> {
-                val aluno = helper!!.getAluno()
-                val dao = AlunoDAO(this)
+                val tarefa = helper!!.getTarefa()
+                val dao = TarefaDAO(this)
 
-                if (aluno.id != 0.toLong()) {
-                    dao.altera(aluno)
+                if (tarefa.id != 0.toLong()) {
+                    dao.altera(tarefa)
                 } else {
-                    dao.insere(aluno)
+                    dao.insere(tarefa)
                 }
 
 
                 dao.close()
-                Toast.makeText(this@FormularioActivity, "Aluno " + aluno.nota + " salvo!", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this@FormularioActivity, "Tarefa " + tarefa.executante + " salvo!", Toast.LENGTH_SHORT).show()
                 finish()
             }
         }
